@@ -1,0 +1,309 @@
+{
+"openapi": "3.0.0",
+"info":{
+"title": "ecommerce",
+"description": "Api para compra y venta de productos",
+"version": "1.0.0"
+
+}, 
+"paths":{
+    "/api/v1/auth/login":{
+        "post":{
+            "tags": ["Authenticate Login"],
+            "description" :"Con este endpoint podras Iniciar sesión y generar JWT",
+            "summary":"Iniciar sesión y generar JWT",
+            "requestBody":{
+              "description":"Para autenticar un usuario se debera enviar un password y un email valido",
+                  "required": true  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/authenticate"}}
+            }
+        }}
+
+    },
+    
+    "/api/v1/user":{
+        "post":{
+            "tags": ["User"],
+            "description" :"Con este endpoint podras Crear usuarios y encriptar sus contraseñas",
+            "summary":"Crear usuario",
+            "requestBody":{
+              "description":"Para crear un usuario se deberas enviar username, password, id del avatar, id de tipo de nombre y un email valido",
+                  "required": true  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/logup"}}
+            }
+        }}
+
+    },
+
+    "/api/v1/user/{id}":{
+        "put":{
+            "tags": ["User"],
+            "description" :"Con este endpoint podras Editar un usuario ( username y avatar ) ",
+            "summary":"Editar un usuario ( username y avatar )",
+            "requestBody":{
+              "description":"Para editar un usuario  deberas enviar username y/o id del avatar",
+                  "required": false  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/updateUser"},
+            "parameters": [
+                { "name": "id",
+                "in": "path",
+                "description": "Para editar un usuario  deberas enviar id de usuario como parametro",
+              "required": true} 
+            ]
+        
+        }
+            }
+        }}
+
+    },
+
+    "/api/v1/product":{
+        "get":{
+            "tags": ["Product"],
+            "description" :"Con este endpoint podras Obtener todos los productos que su cantidad sea mayor que 0, incluyendo el nombre del usuario quien esta vendiendo el producto",
+            "summary":"Obtener todos los productos, cuya cantidad es mayor a 0",
+            "requestBody":{
+                  "required": false 
+        }}
+
+    },
+
+    "/api/v1/products":{
+        "post":{
+            "tags": ["Product"],
+            "description" :"Con este endpoint podras Crear un nuevo producto, incluyendo una imagen ",
+            "summary":"Crear un nuevo producto, incluyendo una imagen",
+            "requestBody":{
+              "description":"Para crear un producto deberas enviar carId, productIdCar, quantity, status",
+                  "required": false  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/createProduct"}}
+            }
+        }}
+
+    },
+    
+    "/api/v1/product/{idp}":{
+        "put":{
+            "tags": ["Product"],
+            "description" :"Con este endpoint podras Poder editar la descripción de un producto ",
+            "summary":"Poder editar la descripción de un producto ",
+            "requestBody":{
+              "description":"Para editar la descripcion de un producto deberas enviar description",
+                  "required": true  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/updateProduct"}}
+            }
+        },
+        "parameters": [
+            { "name": "idp",
+            "in": "path",
+            "description": "Para editar la descripcion deberas enviar id de producto como parametro",
+          "required": true} 
+        ]
+    
+    
+    }
+
+    },
+    
+    "/api/v1/product/get/incar/{id}":{
+        "get":{
+            "tags": ["Product in Car"],
+            "description" :"Con este endpoint podras obtener todos los productos que el usuario tiene hasta el momento en su carrito",
+            "summary":"obtener productos de un carro",
+            "requestBody":{
+              "description":"Para obtener los productos de un carro deberas enviar el id del usuario a consultar",
+                  "required": true  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/getProductInCar"}}
+            }
+        },
+        "parameters": [
+            { "name": "id",
+            "in": "path",
+            "description": "Para obtener los products  deberas enviar id de usuario como parametro",
+          "required": true} 
+        ]
+    
+    }
+
+    },
+    
+    "/api/v1/product/create/incar":{
+        "post":{
+            "tags": ["Product in Car"],
+            "description" :"Con este endpoint podrasAgregar un producto al carrito",
+            "summary":"Agregar un producto al carrito",
+            "requestBody":{
+              "description":"Para agregar un producto al carrito deberas enviar carId, productIdCar, quantity, status",
+                  "required": true  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/createProductInCar"}}
+            }
+        }}
+
+    },
+    
+    "/api/v1/product/get/incar/{idCar}":{
+        "put":{
+            "tags": ["Product in Car"],
+            "description" :"Con este endpoint podras Realizar una compra, todos los productos en el carrito se marcan como comprados y el carrito cambia a status ‘true’",
+            "summary":"cambiar status de carrito a true (comprado)",
+            "requestBody":{
+              "description":"Para actualizar el status del carrito debes enviar el id del carro",
+                  "required": true  ,
+            "content": {"application/json":{ "schema": {"$ref": "#/components/schemas/putProductInCar"}}
+            }
+        },
+        "parameters": [
+            { "name": "idCar",
+            "in": "path",
+            "description": "Para actualizar status de carro  deberas enviar id de carrito",
+          "required": true} 
+        ]
+    }
+
+    },
+
+    "/api/v1/order/get/incar/{idUser}":{
+        "get":{
+            "tags": ["Order"],
+            "description" :"Con este endpoint podras Obtener  todas las ordenes del usuario",
+            "summary":"Ver todas las ordenes del usuario",
+            "requestBody":{
+                "description": "Para obtener las ordenes debes enviar e id del usuario como parametro",
+                  "required": true 
+        },
+        "parameters": [
+            { "name": "idUser",
+            "in": "path",
+            "description": "Para obtener los productos de una orden deberas enviar el id de usuario como parametro",
+          "required": true} 
+        ]
+    }
+
+    }
+
+},
+"components": {
+
+    "schemas":{
+
+        "authenticate":{
+            "type": "object",
+            "properties": { 
+"password": {
+"type": "string",
+"example": "pass123"
+},
+"email":{
+
+    "type": "string",
+    "example": "correo@gmail.com"
+}}},
+
+"logup":{
+    "type": "object",
+    "properties": { 
+"password": {
+"type": "string",
+"example": "pass123"
+},
+"email":{
+
+"type": "string",
+"example": "correo@gmail.com"
+},
+"username": {
+    "type": "string",
+    "example": "eduard"
+    },
+    "avatarId":{
+    
+    "type": "integer",
+    "example": "2"
+    },
+    "idTypeName": {
+        "type": "integer",
+        "example": "3"
+        }
+
+
+}},
+
+"updateUser":{
+    "type": "object",
+    "properties": { 
+        "username": {
+            "type": "string",
+            "example": "eduard"
+            },
+            "avatarId":{
+            
+            "type": "integer",
+            "example": "2"
+            }}},
+            
+        "createProduct":{
+            "type": "object",
+            "properties": { 
+"carId": {
+"type": "integer",
+"example": "1"
+},
+"productIdCar":{
+
+    "type": "integer",
+    "example": "4"
+},
+"quantity": {
+    "type": "integer",
+    "example": "1"
+    },
+    "status":{
+    
+        "type": "boolean",
+        "example": "false"
+    }
+
+}},
+
+"updateProduct":{
+    "type": "object",
+    "properties": { 
+        "description": {
+            "type": "string",
+            "example": "solo un equipo"
+            }}}
+            ,
+
+            "createProductInCar":{
+                "type": "object",
+                "properties": { 
+     
+                        "carId": {
+                        "type": "integer",
+                        "example": "1"
+                        },
+                        "productIdCar":{
+                        
+                            "type": "integer",
+                            "example": "4"
+                        },
+                        "quantity": {
+                            "type": "integer",
+                            "example": "1"
+                            },
+                            "status":{
+                            
+                                "type": "boolean",
+                                "example": "false"
+                            }}}
+
+
+
+
+}
+
+}
+
+
+
+}
